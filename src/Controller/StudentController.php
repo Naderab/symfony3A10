@@ -44,7 +44,7 @@ class StudentController extends AbstractController{
 
         //Execute persist function
         $em->flush();
-        return new Response("added");
+        return $this->redirectToRoute("app_student_getall");
     }
 
     #[Route("/student/update/{id}",name:'app_student_update')]
@@ -61,9 +61,27 @@ class StudentController extends AbstractController{
 
         //Execute update function
         $em->flush();
-        return new Response('updated');
+        return $this->redirectToRoute("app_student_getall");
     }
-    
+
+    #[Route("/student/get/all",name:'app_student_getall')]
+    public function getAllstudent(StudentRepository $repo){
+
+        return $this->render('studentsList.html.twig',[
+            "students"=>$repo->findAll()
+        ]);
+    }
+
+    #[Route('/student/delete/{id}',name:"app_student_delete")]
+    public function deleteStudent($id,ManagerRegistry $manager,StudentRepository $repo){
+        $student = $repo->find($id);
+
+        $em=$manager->getManager();
+        $em->remove($student);
+        $em->flush();
+
+        return $this->redirectToRoute("app_student_getall");
+    }
 }
 
 ?>
