@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Book;
+use App\Form\BookType;
 use App\Repository\AuthorRepository;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -21,13 +23,23 @@ class BookController extends AbstractController
     }
 
     #[Route('/book/add',name:'app_book_add')]
-    public function addbook(EntityManagerInterface $em,AuthorRepository $repo){
+    public function addbook(Request $req,EntityManagerInterface $em,AuthorRepository $repo){
         $book = new Book();
-        $book->setTitle('book 1');
-        $book->setPublicationDate(new \DateTime());
-        $book->setEnabled(true);
-        $author = $repo->find(6);
-        $book->setAuthor($author);
+        $form=$this->createForm(BookType::class,$book);
+
+        $form->handleRequest($req);
+        if($form->isSubmitted())
+        {
+            $em->persist($book);
+
+        $em->flush();
+        return $this->redirectToRoute('app_book_getall');
+        }
+        // $book->setTitle('book 1');
+        // $book->setPublicationDate(new \DateTime());
+        // $book->setEnabled(true);
+        // $author = $repo->find(6);
+        // $book->setAuthor($author);
 
         // $book2 = new Book();
         // $book2->setTitle('book 2');
@@ -39,12 +51,11 @@ class BookController extends AbstractController
         // $book3->setPublicationDate(new \DateTime());
         // $book3->setEnabled(false);
 
-        $em->persist($book);
-        //$em->persist($book2);
-        //$em->persist($book3);
-
-        $em->flush();
-        return $this->redirectToRoute('app_book_getall');
+       return $this->render('book/formBook.html.twig',[
+        'f'=>$form->createView()
+       ]);
+       
+        
     }
 
     #[Route('/book/update/{id}',name:'app_book_update')]

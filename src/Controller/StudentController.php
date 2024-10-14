@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Entity\Student;
+use App\Form\TestType;
 use App\Repository\StudentRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -81,6 +82,14 @@ class StudentController extends AbstractController{
         $em->flush();
 
         return $this->redirectToRoute("app_student_getall");
+    }
+
+    #[Route('/test/form',name:'app_test')]
+    public function Test(){
+        $f= $this->createForm(TestType::class);
+        return $this->render('testform.html.twig',[
+            'f'=>$f->createView()
+        ]);
     }
 }
 
