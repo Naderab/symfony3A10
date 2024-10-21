@@ -40,4 +40,36 @@ class AuthorRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+
+    public function getAuthorsOrdredByName(){
+        //$req = "Select * from author as a order by a.name";
+        $reqQueryBuilder = $this->createQueryBuilder('a')
+                                ->orderBy('a.name','ASC');
+        $query = $reqQueryBuilder->getQuery();
+        return $query->getResult();
+    }
+
+    public function getAuthorsOrdredByNameDQL(){
+        $em = $this->getEntityManager();
+        $query = $em->createQuery("Select a from App\Entity\Author a order by a.name ASC");
+        return $query->getResult();
+
+    }
+
+    public function getAuthorsByName($name){
+        return $this->createQueryBuilder('a')
+                ->where('a.name LIKE :n')
+                ->setParameter('n',$name)
+                ->getQuery()
+                ->getResult();
+    }
+
+    public function getAuthorsByNameDQL($name){
+        $em = $this->getEntityManager();
+        $query = $em->createQuery("select a from App\Entity\Author a where a.name LIKE :n");
+        $query->setParameter('n',$name);
+        return $query->getResult();
+    }
+
 }

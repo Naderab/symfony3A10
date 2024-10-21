@@ -17,7 +17,12 @@ class AuthorController extends AbstractController
    #[Route("/author/get/all",name:'app_author_getall')]
     public function getAllAuthors(AuthorRepository $repo) {
         $authors= $repo->findAll();
-        return $this->render('author/listAuthors.html.twig',['authors'=>$authors]);
+        $authorsOrdred = $repo->getAuthorsOrdredByName();
+        return $this->render('author/listAuthors.html.twig',
+        [
+            'authors'=>$authors,
+            'authorsOrdred'=>$authorsOrdred
+        ]);
     }
 
     #[Route('/author/add',name:'app_author_add')]

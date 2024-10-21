@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Book;
 use App\Form\BookType;
+use App\Form\getByDateType;
+use App\Form\SearchByDateType;
 use App\Repository\AuthorRepository;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,9 +19,18 @@ class BookController extends AbstractController
 {
    
     #[Route("/book/get/all",name:'app_book_getall')]
-    public function getAllbooks(BookRepository $repo) {
+    public function getAllbooks(Request $req,BookRepository $repo) {
+        $booksFiltred = [];
         $books= $repo->findAll();
-        return $this->render('book/listbooks.html.twig',['books'=>$books]);
+        $form = $this->createForm(getByDateType::class);
+        $form->handleRequest($req);
+        if($form->isSubmitted()){
+            $date1 = $form->get('startDate')->getData();
+            $date2 = $form->get('endDate')->getData();
+            $books = $repo->getBookByDate($date1,$date2);
+            return $this->render('book/listbooks.html.twig',['books'=>$books,'f'=>$form]);
+        }
+        return $this->render('book/listbooks.html.twig',['books'=>$books,'f'=>$form]);
     }
 
     #[Route('/book/add',name:'app_book_add')]
@@ -76,4 +87,6 @@ class BookController extends AbstractController
         $em->flush();
         return $this->redirectToRoute('app_book_getall');
     }
+
+
 }

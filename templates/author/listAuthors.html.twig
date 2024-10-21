@@ -54,4 +54,35 @@
 </table>
 <a class="btn btn-outline-success" href="{{path('app_author_add')}}">Add Author</a>
   </div>
-{% endblock %}
+  <h1>List authors ordred by Name</h1>
+  <table class="table">
+  <tr>
+    <th>Id</th>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Books</th>
+  </tr>
+  {% for a in authorsOrdred %}
+    <tr>
+      <td>{{a.id}}</td>
+      <td>{{a.name}}</td>
+      <td>{{a.email}}</td>
+      <td>
+        <ul>
+            {% for b in a.books %}
+            <li>
+              {{b.title}}</li>
+        {% endfor %}
+        </ul>
+          <td>
+        <a class="btn btn-outline-primary" href="{{path('app_author_update',{id:a.id})}}">
+              Update</a>
+        </td>
+        <td>
+          <a class="btn btn-outline-danger" href="{{path('app_author_delete',{id:a.id})}}">Remove</a>
+        </td>
+
+        </tr>
+    {% endfor %}
+  </table>
+ {% endblock %}
